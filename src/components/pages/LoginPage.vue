@@ -11,18 +11,69 @@
            
         </div>
     </div>
-    <form class="loginForm">
+    <form @submit.prevent="" class="loginForm">
         <h1>Sign in</h1>
         <router-link to="/registrationPage" class="refColorWidth">Need an account</router-link>
-        <input class="validationForm" type="email" placeholder="Email">
-        <input class="validationForm" type="password" placeholder="Password">
-        <input  class="validationForm signInBtn" type="submit" value="Sign In">
+        <input class="validationForm" type="email" v-model="email" placeholder="Email">
+        <input class="validationForm" type="password" v-model="password" placeholder="Password">
+        <input   @click="signIn" class="validationForm signInBtn" type="submit" value="Sign In">
+        <input @click="check" class="validationForm signInBtn" type="submit" value="check">
     </form>
 </template>
 
 <script>
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut} from "firebase/auth";
+import { useRouter } from "vue-router";
+import store from "../../store";
     export default {
+        data() {
+         return {
+            // user: {
+            //    username: this.username,
+            //    email: this.email,
+            //    password: this.password
+            // },
+           users: [],
+           displayName : "",
+           email : "",
+           password : "",
+           auth : getAuth(),
+           router: useRouter(),
+           isLoggedIn1:store.state.isLoggedIn,
+        }
         
+    },
+        methods: {
+            isLoggedInmethod() {
+            if(this.auth.currentUser!=null) {
+               store.state.isLoggedIn = true;
+               return true;
+            }
+            else  {
+               store.state.isLoggedIn = false;
+               return false;
+         }
+      },
+            signIn() {
+            signInWithEmailAndPassword(this.auth,this.email,this.password,this.displayName).then((user) => {
+               console.log('Successfully sign in');
+               this.auth.currentUser.displayName = this.displayName;
+               store.state.isLoggedIn = true;
+               this.router.push('/');
+            })
+            .catch((error) => {
+               console.log('error')
+            })
+
+            
+           },
+           check() {
+            this.isLoggedInmethod();
+            console.log(this.auth.currentUser)
+            console.log(store.state.isLoggedIn)
+            
+           }
+        }
     }
 </script>
 

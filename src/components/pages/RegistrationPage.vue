@@ -5,26 +5,26 @@
        </div>
        <div class="headerButtons">
            <router-link to="/"><button class="headerButton">Home</button></router-link>
-           
-           <router-link to="/loginPage"><button class="headerButton signIn">Sign in</button></router-link>
+           <router-link to="/loginPage"><button  class="headerButton signIn">Sign in</button></router-link>
            <router-link to="/registrationPage"><button class="headerButton signUp">Sign up</button></router-link>
-          
+           
        </div>
    </div>
-   <form @submit.prevent="handleSubmit" class="loginForm">
+   <form @submit.prevent="" class="loginForm">
        <h1>Sign up</h1>
        <router-link to="/loginPage" class="refColorWidth">Have an account?</router-link>
-       <input class="validationForm" type="username" v-model="username" placeholder="Username">
+       <input class="validationForm" type="username" v-model="displayName" placeholder="Username">
        <input class="validationForm" type="email" v-model="email" placeholder="Email">
        <input class="validationForm" type="password"  v-model="password" placeholder="Password">
-       <input @click="signUp" class="validationForm signInBtn" type="submit" value="Sign Up">
-       <input @click="check" class="validationForm signInBtn" type="submit" value="check">
+       <input @click="signUp"  class="validationForm signInBtn" type="submit" value="Sign Up">
+       
    </form>
 </template>
 
 <script>
-   import {getAuth,createUserWithEmailAndPassword} from "firebase/auth";
+   import {getAuth,createUserWithEmailAndPassword, signOut} from "firebase/auth";
 import { useRouter } from "vue-router";
+import store from "../../store";
    export default {
     data() {
          return {
@@ -34,31 +34,54 @@ import { useRouter } from "vue-router";
             //    password: this.password
             // },
            users: [],
-           username : "",
+           displayName : "",
            email : "",
            password : "",
            auth : getAuth(),
            router: useRouter(),
-           isLoggedIn:false
+           isLoggedIn1:store.state.isLoggedIn,
         }
         
     },
     
        methods: {
+         isLoggedInmethod() {
+            if(this.auth.currentUser!=null) {
+               store.state.isLoggedIn = true;
+               return true;
+            }
+            else  {
+               store.state.isLoggedIn = false;
+               return false;
+         }
+      },
          signUp() {
-            createUserWithEmailAndPassword(this.auth,this.email, this.password,this.username)
+            createUserWithEmailAndPassword(this.auth,this.email, this.password,this.displayName)
             .then((user) => {
                console.log('Successfullly registered!');
-               console.log(this.auth.currentUser)
+               store.state.isLoggedIn = true;
                this.router.push('/');
+              
             })
             .catch((error) => {
                console.log('error')
             })
            },
            check() {
+            this.isLoggedInmethod();
+            console.log(this.auth.currentUser)
+            console.log(store.state.isLoggedIn)
             
+           },
+           signOutMethod() {
+            signOut(this.auth).then((user) => {
+               console.log('sign out ok')
+            })
+            .catch((error) => {
+               console.log('error')
+            })
            }
+           
       //   handleSubmit() {
          
       //    if(localStorage.getItem('users')) {
