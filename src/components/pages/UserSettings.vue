@@ -1,3 +1,4 @@
+
 <template>
     <div  class="header">
         <div class="headerTitle">
@@ -5,44 +6,40 @@
         </div>
         <div class="headerButtons">
             <router-link to="/"><button class="headerButton signUp">Home</button></router-link>
-            
             <router-link v-if="this.$store.state.isLoggedIn" to="/newArticle"><button  class="headerButton signUp">&#9745 New Article</button></router-link>
             <router-link v-if="this.$store.state.isLoggedIn" to="/settings"><button  class="headerButton signUp"> &#10052 Settings</button></router-link>
-            <router-link v-if="this.$store.state.isLoggedIn" to="/settings "><button  class="headerButton signUp"> {{auth.currentUser.email }}</button></router-link>
-            <router-link v-if="!this.$store.state.isLoggedIn" to="/loginPage"><button  class="headerButton signIn">Sign in</button></router-link>
-            <router-link v-if="!this.$store.state.isLoggedIn" to="/registrationPage"><button   class="headerButton signUp">Sign up</button></router-link>
+            <router-link v-if="this.$store.state.isLoggedIn" to="/hz"><button  class="headerButton signUp"> {{auth.currentUser.email }}</button></router-link>
            <router-link to="/"><button v-if="this.$store.state.isLoggedIn"  @click="signOutMethod" class="headerButton signUp">Sign out</button></router-link>
            <input @click="check" class="validationForm signInBtn" type="submit" value="check">
            <div>{{$store.state.isLoggedIn}}</div>
         </div>
     </div>
-    <div class="loginForm">
-        <input class="validationForm" type="text" v-model="articleTitle"  placeholder="Article Title">
+    <div  v-if="!this.$store.state.isLoggedIn" class="banner">
+        <h1>conduit</h1>
+        <p>A place to share your knowledge.</p>
+    </div>
+   <div class="settingsForm">
+    <h1>Your settings</h1>
+    <input class="validationForm" type="text" v-model="articleTitle" placeholder="Article Title">
         <textarea class="validationForm" type="text" v-model="article" placeholder="Write your article"></textarea>
         <input class="validationForm" type="text" v-model="tags" placeholder="Enter tags">
-        <input   @click="saveArticle" class="validationForm signInBtn" type="submit" value="Publicate">
-    </div>
+   </div>>
+    
+    <RouterView /> 
 </template>
 
 <script>
-    import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut} from "firebase/auth";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut} from "firebase/auth";
 import { useRouter } from "vue-router";
 import store from "../../store";
 import {  } from "vue";
 
 export default {
+    
     data() {
          return {
             
-        //    users: [
-            
-        //     articles = [
-        //         articleTitle = 'art',
-        //         article = 'art2',
-        //         tags = 'art3'
-        //     ]
-        //    ],
-           articles:[],
+           users: [],
            displayName : "",
            email : "",
            password : "",
@@ -54,7 +51,7 @@ export default {
         
     },
     setup() {
-                 
+       
             //  beforeMount(() => {
             //     console.log(store.state.isLoggedIn)
             //     if(store.state.isLoggedIn) {
@@ -67,9 +64,7 @@ export default {
         
     },
     methods: {
-         saveArticle() {
-            
-         },
+        
          isLoggedInmethod() {
             if(this.auth.currentUser!=null) {
                
@@ -86,10 +81,10 @@ export default {
       
            check() {
             this.isLoggedInmethod();
+            const email = this.auth.currentUser.email;
             console.log(this.auth.currentUser)
             console.log(store.state.isLoggedIn)
-            
-            console.log(this.users)
+            console.log(this.auth.currentUser.email)
             // console.log(this.auth.currentUser.displayName)
             // console.log(this.auth.currentUser.name)
             
@@ -112,6 +107,16 @@ export default {
 
 
 <style>
+.settingsForm {
+    width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    flex-direction: column;
+    gap: 15px;
+}
 .banner {
     font-family: "Source Sans Pro", sans-serif;
     background-color: #5CB85C;
@@ -174,50 +179,30 @@ export default {
 .signIn:hover {
     opacity: 1;
 }
-.loginForm {
-    display: flex;
-    flex-direction: column;
-    width: 800px;
-    max-width: 800px;
-    gap: 15px;
-    margin-left: auto;margin-right: auto;
-}
-h1 {
-    text-align: center;
-    font-size: 40px;
-}
-.refColorWidth {
-    color: #5CB85C;
-    text-align: center;
-    text-decoration: none;
-    transition: 0.3s;
-
-}
-.refColorWidth:hover {
-    text-decoration: underline;
-}
-.validationForm {
-    padding: 12px 24px;
-    font-size: 15px;
-    border-radius: 5px;
-    border:solid 1px rgb(132, 127, 127);
-}
-.validationForm:focus {
-   border-color: #5CB85C;
-}
-.signInBtn {
-    background-color: #5CB85C;
-    align-self: end;
-    color: white;
-    border: none;
+.togglePanel {
+    display:flex;
+    gap: 20px;
+    margin-top: 24px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1100px;
     cursor: pointer;
     
+    
 }
-.signInBtn:hover {
-    background-color: #1ea41e;
+.togglePanelRef {
+
 }
-textarea {
-    resize: vertical;
+.togglePanelRef:hover {
+    opacity: 1;
+    opacity:0.3;
+    transition: 0.3s;
+}
+hr{
+    width: 1100px;  
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
 }
 
 </style>

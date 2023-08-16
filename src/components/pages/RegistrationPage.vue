@@ -13,10 +13,11 @@
    <form @submit.prevent="" class="loginForm">
        <h1>Sign up</h1>
        <router-link to="/loginPage" class="refColorWidth">Have an account?</router-link>
-       <input class="validationForm" type="username" v-model="displayName" placeholder="Username">
+       <input class="validationForm" type="username" v-model="displayName"  placeholder="Username">
        <input class="validationForm" type="email" v-model="email" placeholder="Email">
        <input class="validationForm" type="password"  v-model="password" placeholder="Password">
-       <input @click="signUp"  class="validationForm signInBtn" type="submit" value="Sign Up">
+       <input @click="signUp(); users.push(this.auth.currentUser.email)"  class="validationForm signInBtn" type="submit" value="Sign Up">
+       <input @click="check" class="validationForm signInBtn" type="submit" value="check">
        
    </form>
 </template>
@@ -28,12 +29,18 @@ import store from "../../store";
    export default {
     data() {
          return {
-            // user: {
-            //    username: this.username,
-            //    email: this.email,
-            //    password: this.password
-            // },
-           users: [],
+            
+           users: [
+            {
+               email:[
+                  {
+                     articleTitle: this.articleTitle,
+                     article: this.article,
+                     tags: this.tags
+                  }
+               ]
+            }
+           ],
            displayName : "",
            email : "",
            password : "",
@@ -58,7 +65,8 @@ import store from "../../store";
          signUp() {
             createUserWithEmailAndPassword(this.auth,this.email, this.password,this.displayName)
             .then((user) => {
-               console.log('Successfullly registered!');
+               console.log('Successfully registered!');
+               this.users.push(this.auth.currentUser.email)
                store.state.isLoggedIn = true;
                this.router.push('/');
               
@@ -66,11 +74,17 @@ import store from "../../store";
             .catch((error) => {
                console.log('error')
             })
+            
+           },
+           addElement() {
+            this.users.push(this.auth.currentUser.email)
            },
            check() {
             this.isLoggedInmethod();
             console.log(this.auth.currentUser)
             console.log(store.state.isLoggedIn)
+            console.log(this.auth.currentUser.email)
+            console.log(users)
             
            },
            signOutMethod() {

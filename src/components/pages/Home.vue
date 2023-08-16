@@ -9,19 +9,28 @@
             
             <router-link v-if="this.$store.state.isLoggedIn" to="/newArticle"><button  class="headerButton signUp">&#9745 New Article</button></router-link>
             <router-link v-if="this.$store.state.isLoggedIn" to="/settings"><button  class="headerButton signUp"> &#10052 Settings</button></router-link>
-            <router-link v-if="this.$store.state.isLoggedIn" to="/settings"><button  class="headerButton signUp"> {{auth.currentUser.email }}</button></router-link>
+            <router-link v-if="this.$store.state.isLoggedIn" to="/hz"><button  class="headerButton signUp"> {{auth.currentUser.email }}</button></router-link>
             <router-link v-if="!this.$store.state.isLoggedIn" to="/loginPage"><button  class="headerButton signIn">Sign in</button></router-link>
             <router-link v-if="!this.$store.state.isLoggedIn" to="/registrationPage"><button   class="headerButton signUp">Sign up</button></router-link>
            <router-link to="/"><button v-if="this.$store.state.isLoggedIn"  @click="signOutMethod" class="headerButton signUp">Sign out</button></router-link>
-           <input @click="check" class="validationForm signInBtn" type="submit" value="check">
+           <input @click="check"  class="validationForm signInBtn" type="submit" value="check">
+           <input @click="checkDB"  class="validationForm signInBtn" type="submit" value="checkDBN">
            <div>{{$store.state.isLoggedIn}}</div>
         </div>
     </div>
-    <div class="banner">
+    <div  v-if="!this.$store.state.isLoggedIn" class="banner">
         <h1>conduit</h1>
         <p>A place to share your knowledge.</p>
     </div>
-    
+    <div class="togglePanel">
+        <div class="togglePanelRef"> 
+            Your Feed
+        </div>
+        <div class="togglePanelRef">
+            Global Feed
+        </div>
+    </div>
+    <hr>
     <RouterView /> 
 </template>
 
@@ -30,8 +39,9 @@ import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, signO
 import { useRouter } from "vue-router";
 import store from "../../store";
 import {  } from "vue";
-
+import { getDatabase, ref, set } from "firebase/database";
 export default {
+    
     data() {
          return {
             
@@ -54,13 +64,11 @@ export default {
             //         store.state.isLoggedIn= true
             //     }
             //     console.log(store.state.isLoggedIn)
-            //  })       
-
-
-        
+            //  })           
     },
     methods: {
         
+
          isLoggedInmethod() {
             if(this.auth.currentUser!=null) {
                
@@ -76,10 +84,13 @@ export default {
       
       
            check() {
+            this.users.push(this.auth.currentUser.email)
             this.isLoggedInmethod();
+            const email = this.auth.currentUser.email;
             console.log(this.auth.currentUser)
             console.log(store.state.isLoggedIn)
             console.log(this.auth.currentUser.email)
+            console.log(this.users)
             // console.log(this.auth.currentUser.displayName)
             // console.log(this.auth.currentUser.name)
             
@@ -163,6 +174,31 @@ export default {
 }
 .signIn:hover {
     opacity: 1;
+}
+.togglePanel {
+    display:flex;
+    gap: 20px;
+    margin-top: 24px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1100px;
+    cursor: pointer;
+    
+    
+}
+.togglePanelRef {
+
+}
+.togglePanelRef:hover {
+    opacity: 1;
+    opacity:0.3;
+    transition: 0.3s;
+}
+hr{
+    width: 1100px;  
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
 }
 
 </style>
