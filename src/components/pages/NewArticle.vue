@@ -8,7 +8,7 @@
             
             <router-link v-if="this.$store.state.isLoggedIn" to="/newArticle"><button  class="headerButton signUp">&#9745 New Article</button></router-link>
             <router-link v-if="this.$store.state.isLoggedIn" to="/settings"><button  class="headerButton signUp"> &#10052 Settings</button></router-link>
-            <router-link v-if="this.$store.state.isLoggedIn" to="/settings "><button  class="headerButton signUp"> {{auth.currentUser.email }}</button></router-link>
+            <router-link v-if="this.$store.state.isLoggedIn" to="/settings "><button  class="headerButton signUp"> {{$store.state.usernameInHeader}}</button></router-link>
             <router-link v-if="!this.$store.state.isLoggedIn" to="/loginPage"><button  class="headerButton signIn">Sign in</button></router-link>
             <router-link v-if="!this.$store.state.isLoggedIn" to="/registrationPage"><button   class="headerButton signUp">Sign up</button></router-link>
            <router-link to="/"><button v-if="this.$store.state.isLoggedIn"  @click="signOutMethod" class="headerButton signUp">Sign out</button></router-link>
@@ -42,8 +42,10 @@ export default {
         //         tags = 'art3'
         //     ]
         //    ],
-           articles:[],
-           displayName : "",
+        articleTitle:'',
+           article:'',
+           tags: '',
+           
            email : "",
            password : "",
            auth : getAuth(),
@@ -68,7 +70,11 @@ export default {
     },
     methods: {
          saveArticle() {
-            
+            const docRef =  addDoc(collection(db, "postArrays"), {
+  articleTitle: this.articleTitle,
+  article: this.article,
+  tags:this.tags
+});
          },
          isLoggedInmethod() {
             if(this.auth.currentUser!=null) {

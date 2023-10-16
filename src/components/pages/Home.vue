@@ -9,12 +9,11 @@
             
             <router-link v-if="this.$store.state.isLoggedIn" to="/newArticle"><button  class="headerButton signUp">&#9745 New Article</button></router-link>
             <router-link v-if="this.$store.state.isLoggedIn" to="/settings"><button  class="headerButton signUp"> &#10052 Settings</button></router-link>
-            <router-link v-if="this.$store.state.isLoggedIn" to="/hz"><button  class="headerButton signUp"> {{auth.currentUser.email }}</button></router-link>
+            <router-link v-if="this.$store.state.isLoggedIn" to="/hz"><button  class="headerButton signUp"> {{$store.state.usernameInHeader}} </button></router-link>
             <router-link v-if="!this.$store.state.isLoggedIn" to="/loginPage"><button  class="headerButton signIn">Sign in</button></router-link>
             <router-link v-if="!this.$store.state.isLoggedIn" to="/registrationPage"><button   class="headerButton signUp">Sign up</button></router-link>
            <router-link to="/"><button v-if="this.$store.state.isLoggedIn"  @click="signOutMethod" class="headerButton signUp">Sign out</button></router-link>
            <input @click="check"  class="validationForm signInBtn" type="submit" value="check">
-           <input @click="checkDB"  class="validationForm signInBtn" type="submit" value="checkDBN">
            <div>{{$store.state.isLoggedIn}}</div>
         </div>
     </div>
@@ -39,33 +38,39 @@ import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, signO
 import { useRouter } from "vue-router";
 import store from "../../store";
 import {  } from "vue";
-import { getDatabase, ref, set } from "firebase/database";
+import { db } from "../../main";
+
+
+import {getFirestore,collection,getDocs,getDoc, query, where,addDoc, CollectionReference,doc, FieldValue} from 'firebase/firestore'
 export default {
     
     data() {
          return {
-            
-           users: [],
+            users:[],
+           usersa: [
+            {
+               email:[
+                  {
+                     articleTitle: this.articleTitle,
+                     article: this.article,
+                     tags: this.tags
+                  }
+               ]
+            }
+           ],
            displayName : "",
            email : "",
            password : "",
            auth : getAuth(),
            router: useRouter(),
+           db:getFirestore() ,
+           userNameInHeader:store.state.usernameInHeader,
            isLoggedIn1:store.state.isLoggedIn,
         }
         
-        
     },
-    setup() {
-       
-            //  beforeMount(() => {
-            //     console.log(store.state.isLoggedIn)
-            //     if(store.state.isLoggedIn) {
-            //         store.state.isLoggedIn= true
-            //     }
-            //     console.log(store.state.isLoggedIn)
-            //  })           
-    },
+    
+    
     methods: {
         
 
@@ -83,16 +88,23 @@ export default {
       },
       
       
-           check() {
-            this.users.push(this.auth.currentUser.email)
+           async check() {
+            
             this.isLoggedInmethod();
-            const email = this.auth.currentUser.email;
-            console.log(this.auth.currentUser)
+            
             console.log(store.state.isLoggedIn)
             console.log(this.auth.currentUser.email)
-            console.log(this.users)
-            // console.log(this.auth.currentUser.displayName)
-            // console.log(this.auth.currentUser.name)
+            const q = query(collection(db, "users"), where("email", "==", this.auth.currentUser.email));
+
+const querySnapshot = await getDocs(q);
+querySnapshot.forEach((doc) => {
+  // doc.data() is never undefined for query doc snapshots
+  console.log('from db',doc.data().username);
+  console.log(doc.data().username)
+  const userNameInHeader = doc.data().username
+  console.log(userNameInHeader)
+});
+            
             
            },
            signOutMethod() {
@@ -100,7 +112,7 @@ export default {
                console.log('sign out ok')
                store.state.isLoggedIn = false;
                this.isLoggedInmethod();
-               
+               GpbSOlvBCDNkP3kpEqBIOEWvP153
             })
             .catch((error) => {
                console.log('error')

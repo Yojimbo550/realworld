@@ -24,13 +24,16 @@
 
 <script>
    import {getAuth,createUserWithEmailAndPassword, signOut} from "firebase/auth";
+   import {getFirestore,collection,getDocs, addDoc,setDoc} from 'firebase/firestore'
 import { useRouter } from "vue-router";
 import store from "../../store";
+import { db } from "../../main";
+
    export default {
     data() {
          return {
-            
-           users: [
+            users:[],
+           usersa: [
             {
                email:[
                   {
@@ -46,11 +49,13 @@ import store from "../../store";
            password : "",
            auth : getAuth(),
            router: useRouter(),
+           db:getFirestore(),
+           
+           
            isLoggedIn1:store.state.isLoggedIn,
         }
         
     },
-    
        methods: {
          isLoggedInmethod() {
             if(this.auth.currentUser!=null) {
@@ -66,25 +71,29 @@ import store from "../../store";
             createUserWithEmailAndPassword(this.auth,this.email, this.password,this.displayName)
             .then((user) => {
                console.log('Successfully registered!');
-               this.users.push(this.auth.currentUser.email)
+               const docRef =  addDoc(collection(db, "users"), {
+  email: this.email,
+  username: this.displayName
+});
+               store.state.usernameInHeader = this.displayName
                store.state.isLoggedIn = true;
+               console.log(store.state.usernameInHeader)
                this.router.push('/');
-              
+               
             })
             .catch((error) => {
                console.log('error')
             })
             
            },
-           addElement() {
-            this.users.push(this.auth.currentUser.email)
-           },
+          
            check() {
             this.isLoggedInmethod();
             console.log(this.auth.currentUser)
             console.log(store.state.isLoggedIn)
             console.log(this.auth.currentUser.email)
-            console.log(users)
+            
+            
             
            },
            signOutMethod() {

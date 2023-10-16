@@ -25,6 +25,7 @@
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut} from "firebase/auth";
 import { useRouter } from "vue-router";
 import store from "../../store";
+
     export default {
         data() {
          return {
